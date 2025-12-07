@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
+import { useHistory } from '../context/HistoryContext';
 import { X, Save } from 'lucide-react';
 import './SettingsForm.css';
 
@@ -10,6 +11,7 @@ interface SettingsFormProps {
 
 const SettingsForm: React.FC<SettingsFormProps> = ({ isOpen, onClose }) => {
     const { settings, updateSettings } = useSettings();
+    const { clearHistory } = useHistory();
     const [localSettings, setLocalSettings] = useState(settings);
 
     if (!isOpen) return null;
@@ -42,22 +44,6 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="settings-body">
-                    <div className="form-group">
-                        <label>Tema</label>
-                        <div className="theme-selector">
-                            {(['default', 'minimal', 'cyberpunk', 'pastel'] as const).map((t) => (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    className={`theme-btn ${localSettings.theme === t ? 'active' : ''}`}
-                                    onClick={() => handleThemeChange(t)}
-                                >
-                                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     <div className="form-group">
                         <label>Odaklanma (dk)</label>
                         <input
@@ -124,6 +110,22 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ isOpen, onClose }) => {
                         <Save size={18} /> Kaydet
                     </button>
                 </div>
+            </div>
+            <div className="form-group" style={{ marginTop: '2rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
+                <h4 style={{ color: '#ff6b6b', marginBottom: '0.5rem' }}>Tehlikeli Bölge</h4>
+                <button
+                    type="button"
+                    onClick={() => {
+                        if (window.confirm('Tüm geçmiş verileriniz silinecek. Bu işlem geri alınamaz. Emin misiniz?')) {
+                            clearHistory();
+                            alert('Veriler silindi.');
+                        }
+                    }}
+                    className="settings-btn"
+                    style={{ backgroundColor: 'rgba(255, 107, 107, 0.1)', color: '#ff6b6b', borderColor: '#ff6b6b' }}
+                >
+                    Tüm Verilerimi Sil
+                </button>
             </div>
         </div>
     );

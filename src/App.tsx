@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSettings } from './context/SettingsContext';
-import type { Settings } from './context/SettingsContext';
 import { useHistory } from './context/HistoryContext';
 import { useTasks } from './context/TaskContext';
 import { useAudio } from './context/AudioContext';
@@ -14,10 +13,11 @@ import HistoryView from './components/HistoryView';
 import TaskSelector from './components/TaskSelector';
 import WhyScreen from './components/WhyScreen';
 import AmbiencePanel from './components/AmbiencePanel';
-import { Settings as SettingsIcon, History } from 'lucide-react';
+import StatsView from './components/StatsView';
+import { Settings as SettingsIcon, History as HistoryIcon, User, BarChart2 } from 'lucide-react';
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
   const { settings } = useSettings();
   const { addSession } = useHistory();
   const { activeTaskId, tasks } = useTasks();
@@ -30,6 +30,7 @@ function App() {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
   const [isWhyOpen, setIsWhyOpen] = useState(false);
 
@@ -39,12 +40,16 @@ function App() {
   const engineRef = useRef<TimerEngine | null>(null);
   const handleCompleteRef = useRef<() => void>(() => { });
 
+  // Track actual start time for history (resets on session completion/discard)
+  const sessionStartTimeRef = useRef<number>(Date.now());
+
   const handleTimerComplete = useCallback(() => {
     setIsRunning(false);
 
     // If we finished a WORK session
     if (mode === 'work') {
       playNotification('complete'); // Uplifting sound
+      if (navigator.vibrate) navigator.vibrate([500, 200, 500]); // Vibrate pattern
       const duration = settings.workDuration;
       setLastSessionDuration(duration);
       setIsSessionModalOpen(true);
@@ -99,7 +104,7 @@ function App() {
     engineRef.current?.reset(newDuration);
     setRemainingTime(newDuration);
 
-  }, [settings, mode, isRunning]);
+  }, [settings, mode]); // Removed isRunning to prevent reset on pause
 
   const handleSessionDiscard = () => {
     setIsSessionModalOpen(false);
@@ -120,7 +125,7 @@ function App() {
 
   const handleSessionSave = (note: string) => {
     addSession({
-      startTime: Date.now() - (lastSessionDuration * 60 * 1000),
+      startTime: sessionStartTimeRef.current, // Use actual start time
       endTime: Date.now(),
       duration: lastSessionDuration,
       type: 'work',
@@ -141,7 +146,9 @@ function App() {
       if (mode === 'work' && remainingTime === fullDuration) {
         setIsWhyOpen(true);
       } else {
+        if (navigator.vibrate) navigator.vibrate(200); // Short vibration
         playNotification('start');
+        sessionStartTimeRef.current = Date.now();
         engineRef.current?.start();
         setIsRunning(true);
       }
@@ -151,7 +158,9 @@ function App() {
   const handleWhyCommit = (reason: string) => {
     setCurrentCommitment(reason);
     setIsWhyOpen(false);
+    if (navigator.vibrate) navigator.vibrate(200);
     playNotification('start');
+    sessionStartTimeRef.current = Date.now();
     engineRef.current?.start();
     setIsRunning(true);
   };
@@ -163,7 +172,13 @@ function App() {
 
   const handleSkip = () => {
     engineRef.current?.stop();
-    handleTimerComplete();
+    setIsRunning(false);
+    // Skip does not count as success
+    if (mode === 'work') {
+      setMode('shortBreak');
+    } else {
+      setMode('work');
+    }
   };
 
   const getTotalDuration = () => {
@@ -187,11 +202,14 @@ function App() {
         <div className="logo">Pomodoro</div>
         <div className="user-info">
           {settings.userName && <span className="user-name">Merhaba, {settings.userName}</span>}
-          <button className="settings-btn btn-reset" onClick={() => setIsHistoryOpen(true)} title="Geçmiş">
-            <History size={20} />
+          <button className="btn-icon" onClick={() => setIsHistoryOpen(true)} title="Geçmiş">
+            <HistoryIcon size={24} />
           </button>
-          <button className="settings-btn btn-reset" onClick={() => setIsSettingsOpen(true)} title="Ayarlar">
-            <SettingsIcon size={20} />
+          <button className="btn-icon" onClick={() => setIsStatsOpen(true)} title="İstatistikler">
+            <BarChart2 size={24} />
+          </button>
+          <button className="btn-icon" onClick={() => setIsSettingsOpen(true)} title="Ayarlar">
+            <SettingsIcon size={24} />
           </button>
         </div>
       </nav>
@@ -225,6 +243,7 @@ function App() {
 
       <SettingsForm isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       <HistoryView isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
+      <StatsView isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
 
       <SessionCompleteModal
         isOpen={isSessionModalOpen}

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import type { ReactNode } from 'react';
 import { SoundSynthesizer } from '../utils/SoundSynthesizer';
 
-export type SoundType = 'rain' | 'forest' | 'cafe' | 'none';
+export type SoundType = 'rain' | 'forest' | 'wind' | 'none';
 
 interface AudioContextType {
     activeAmbience: SoundType;
@@ -31,13 +31,12 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         synthRef.current.stopAmbience();
 
         if (activeAmbience === 'rain') {
-            synthRef.current.playWhiteNoise(volume);
+            synthRef.current.playWhiteNoise(volume); // Rain
+        } else if (activeAmbience === 'forest') {
+            synthRef.current.playBrownNoise(volume); // Forest
+        } else if (activeAmbience === 'wind') {
+            synthRef.current.playWind(volume); // Wind
         }
-        // 'forest' and 'cafe' are temporarily disabled or mapped to noise for now to ensure stability
-        // or we could implementing simple tone clusters, but for now let's just use noise for rain
-        // and maybe nothing for others to avoid crashing?
-        // Let's fallback 'forest' and 'cafe' to 'none' quietly or just do nothing,
-        // OR strictly support RAIN as the reliable one.
 
     }, [activeAmbience, volume]);
 

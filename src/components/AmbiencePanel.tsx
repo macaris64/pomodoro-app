@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAudio } from '../context/AudioContext';
 import type { SoundType } from '../context/AudioContext';
-import { CloudRain, Trees, Coffee, Volume2, Music, VolumeX } from 'lucide-react';
+import { CloudRain, Trees, Wind, Volume2, Music, VolumeX } from 'lucide-react';
 import './AmbiencePanel.css';
 
 const AmbiencePanel: React.FC = () => {
@@ -11,7 +11,7 @@ const AmbiencePanel: React.FC = () => {
         { id: 'none', icon: <VolumeX size={20} />, label: 'Sessiz' },
         { id: 'rain', icon: <CloudRain size={20} />, label: 'Yağmur' },
         { id: 'forest', icon: <Trees size={20} />, label: 'Orman' },
-        { id: 'cafe', icon: <Coffee size={20} />, label: 'Kafe' },
+        { id: 'wind', icon: <Wind size={20} />, label: 'Rüzgar' },
     ];
 
     return (

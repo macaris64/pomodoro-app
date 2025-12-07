@@ -7,6 +7,13 @@ const TaskSelector: React.FC = () => {
     const { tasks, addTask, toggleTask, deleteTask, activeTaskId, setActiveTask } = useTasks();
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [isAdding, setIsAdding] = useState(false);
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    React.useEffect(() => {
+        if (isAdding && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [isAdding]);
 
     const handleAddTask = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,11 +47,11 @@ const TaskSelector: React.FC = () => {
             {isAdding && (
                 <form onSubmit={handleAddTask} className="add-task-form">
                     <input
+                        ref={inputRef}
                         className="task-input"
                         placeholder="Ne üzerinde çalışacaksın?"
                         value={newTaskTitle}
                         onChange={(e) => setNewTaskTitle(e.target.value)}
-                        autoFocus
                     />
                     <button type="submit" className="btn-small-primary">Ekle</button>
                 </form>
