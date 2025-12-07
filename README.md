@@ -2,6 +2,9 @@
 
 A modern, feature-rich Pomodoro timer application built with React, TypeScript, and Vite. Designed to boost productivity with a premium aesthetic, gamification elements, and robust session tracking.
 
+<img width="1728" height="1026" alt="Screenshot 2025-12-07 at 15 07 29" src="https://github.com/user-attachments/assets/3255f71e-3ebf-48dc-8dc1-276e5a7b4504" />
+
+
 ## ✨ Features
 
 - **Core Timer Logic**: Accurate timer using `requestAnimationFrame` with Work, Short Break, and Long Break modes.
