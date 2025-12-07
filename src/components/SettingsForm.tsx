@@ -29,9 +29,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ isOpen, onClose }) => {
         onClose();
     };
 
-    const handleThemeChange = (t: any) => {
-        setLocalSettings(prev => ({ ...prev, theme: t }));
-    };
+
 
     return (
         <div className="settings-overlay">

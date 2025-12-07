@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useSettings } from './context/SettingsContext';
 import { useHistory } from './context/HistoryContext';
 import { useTasks } from './context/TaskContext';
@@ -14,19 +14,26 @@ import TaskSelector from './components/TaskSelector';
 import WhyScreen from './components/WhyScreen';
 import AmbiencePanel from './components/AmbiencePanel';
 import StatsView from './components/StatsView';
-import { Settings as SettingsIcon, History as HistoryIcon, User, BarChart2 } from 'lucide-react';
+import { Settings as SettingsIcon, History as HistoryIcon, BarChart2 } from 'lucide-react';
+import type { Settings } from './context/SettingsContext';
 import './App.css';
+import { getDailyStats } from './utils/statsUtils';
 
 const App: React.FC = () => {
   const { settings } = useSettings();
-  const { addSession } = useHistory();
+  const { addSession, history } = useHistory();
   const { activeTaskId, tasks } = useTasks();
   const { playNotification } = useAudio();
 
   const [mode, setMode] = useState<TimerMode>('work');
   const [remainingTime, setRemainingTime] = useState(settings.workDuration * 60);
   const [isRunning, setIsRunning] = useState(false);
-  const [completedSessions, setCompletedSessions] = useState(0);
+
+  // Derived state for completed sessions
+  const completedSessions = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return getDailyStats(history, today).sessions;
+  }, [history]);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -106,16 +113,22 @@ const App: React.FC = () => {
 
   }, [settings, mode]); // Removed isRunning to prevent reset on pause
 
-  const handleSessionDiscard = () => {
+  const handleSessionDiscard = (wasSaved = false) => {
     setIsSessionModalOpen(false);
     setCurrentCommitment(''); // Reset commitment
 
-    const newCompleted = completedSessions + 1;
-    setCompletedSessions(newCompleted);
+    // Calculate effective count for next mode logic
+    // If saved, current count wraps *including* the new one (already in history? maybe not immediately reflected if async, 
+    // but React state update is usually fast enough, or we add 1 if we know we just saved)
+    // Actually simplicity: if we just saved, count is completedSessions + 1. If discarded, count is completedSessions.
+
+    // Wait, history update might be slightly async or batched. 
+    // Let's assume safely: if wasSaved is true, we treat it as count+1 for the logic.
+    const effectiveCount = wasSaved ? completedSessions + 1 : completedSessions;
 
     // Determine next mode
     setMode(() => {
-      if (newCompleted % settings.sessionsBeforeLongBreak === 0) {
+      if (effectiveCount > 0 && effectiveCount % settings.sessionsBeforeLongBreak === 0) {
         return 'longBreak';
       } else {
         return 'shortBreak';
@@ -133,7 +146,7 @@ const App: React.FC = () => {
       taskId: activeTaskId || undefined,
       commitment: currentCommitment || undefined
     });
-    handleSessionDiscard();
+    handleSessionDiscard(true);
   };
 
   const toggleTimer = () => {

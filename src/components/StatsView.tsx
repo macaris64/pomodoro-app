@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from '../context/HistoryContext';
 import { getDailyStats, getWeeklyStats, getMonthlyStats, getYearlyStats } from '../utils/statsUtils';
-import { X, ChevronLeft, ChevronRight, BarChart2, Calendar } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react';
 import './StatsView.css';
 
 interface StatsViewProps {

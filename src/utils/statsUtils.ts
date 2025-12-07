@@ -1,4 +1,4 @@
-import { SessionRecord } from '../context/HistoryContext';
+import type { SessionRecord } from '../context/HistoryContext';
 
 export interface DailyStats {
     date: string; // YYYY-MM-DD
@@ -73,7 +73,7 @@ export const getMonthlyStats = (history: SessionRecord[], month: number, year: n
     const stats: MonthlyStats[] = [];
 
     for (let i = 1; i <= daysInMonth; i++) {
-        const date = new Date(year, month, i); // Ensure local time construction
+
         // Fix for timezone offset issues with ISO string if not handled carefully:
         // Let's just create a simplified YYYY-MM-DD string manually to be safe
         const mStr = (month + 1).toString().padStart(2, '0');
