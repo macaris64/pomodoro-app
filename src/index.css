@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #0a0e17;
+  /* Deep almost black */
+  --bg-secondary: #1a1f2e;
+  /* Slightly lighter for cards if needed */
+
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --accent-glow: rgba(99, 102, 241, 0.5);
+
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+
+  --font-main: 'Outfit', sans-serif;
+
+  --transition-fast: 0.2s ease;
+  --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* Changed from center to allow scrolling from top */
+  position: relative;
+  padding: 2rem 0;
+  /* Add padding for spacing */
+}
+
+/* Utils */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--glass-border);
+  border-left: 1px solid var(--glass-border);
+}
+
+.btn-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px -5px var(--accent-glow);
+  }
+
+  50% {
+    box-shadow: 0 0 35px -5px var(--accent-glow);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Themes */
+
+body.theme-minimal {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --accent-gradient: linear-gradient(135deg, #334155 0%, #475569 100%);
+  --accent-glow: rgba(51, 65, 85, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.5);
+}
+
+body.theme-cyberpunk {
+  --bg-primary: #050505;
+  --bg-secondary: #121212;
+  --text-primary: #00ff9f;
+  --text-secondary: #008f58;
+  --accent-gradient: linear-gradient(135deg, #fcee0a 0%, #00ff9f 100%);
+  --accent-glow: rgba(0, 255, 159, 0.5);
+  --glass-bg: rgba(0, 20, 10, 0.8);
+  --glass-border: #00ff9f;
+  --glass-highlight: rgba(252, 238, 10, 0.3);
+  --font-main: 'Courier New', monospace;
+}
+
+body.theme-pastel {
+  --bg-primary: #fff0f5;
+  --bg-secondary: #ffeef2;
+  --text-primary: #5e4b56;
+  --text-secondary: #9d818e;
+  --accent-gradient: linear-gradient(135deg, #f9a8d4 0%, #c4b5fd 100%);
+  --accent-glow: rgba(249, 168, 212, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-highlight: rgba(255, 255, 255, 0.8);
+}

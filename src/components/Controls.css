@@ -1,0 +1,55 @@
+.controls-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.control-btn {
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition-spring);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+.control-btn.primary {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-gradient);
+    color: white;
+    box-shadow: 0 10px 25px -5px var(--accent-glow);
+}
+
+.control-btn.primary:hover {
+    box-shadow: 0 15px 35px -5px var(--accent-glow);
+}
+
+.control-btn.secondary {
+    width: 50px;
+    height: 50px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+
+.control-btn.secondary:hover {
+    color: var(--text-primary);
+    background: var(--glass-highlight);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Specific to Play icon alignment usually */
+.ml-1 {
+    margin-left: 4px;
+}
